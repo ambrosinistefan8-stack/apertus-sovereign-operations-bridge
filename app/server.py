@@ -38,7 +38,7 @@ class Handler(BaseHTTPRequestHandler):
 
 def main():
     host=os.environ.get("HOST","127.0.0.1"); port=int(os.environ.get("PORT","8080"))
-    print(f"Apertus Controlled Office Agent running on http://{host}:{port}")
+    print(f"Apertus Sovereign Operations Bridge running on http://{host}:{port}")
     print(f"Mode: {os.environ.get('APERTUS_MODE','mock')}")
     ThreadingHTTPServer((host,port),Handler).serve_forever()
 
