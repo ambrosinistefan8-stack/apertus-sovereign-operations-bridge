@@ -1,0 +1,8 @@
+[project]
+name = "apertus-controlled-office-agent"
+version = "0.1.0"
+description = "Clean-room Hack Apertus prototype for source-aware, human-controlled AI workflows"
+requires-python = ">=3.11"
+
+[tool.setuptools]
+packages = ["app"]
