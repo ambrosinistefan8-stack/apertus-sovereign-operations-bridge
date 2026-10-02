@@ -1,0 +1,45 @@
+name: demo-smoke
+
+on:
+  push:
+    paths:
+      - ".github/workflows/demo-smoke.yml"
+  workflow_dispatch:
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify public demo
+        run: |
+          python - <<'PY'
+          import json, urllib.request
+          base="https://apertus-sovereign-operations-bridge.onrender.com"
+          with urllib.request.urlopen(base+"/health", timeout=60) as r:
+              assert r.status == 200
+              health=json.loads(r.read().decode())
+              assert health["status"]=="ok"
+              assert health["mode"]=="mock"
+          with urllib.request.urlopen(base+"/", timeout=60) as r:
+              assert r.status == 200
+              home=r.read().decode()
+              assert "Apertus" in home
+          expected={
+              "normal":"VERIFIED",
+              "conflict":"HUMAN_REVIEW",
+              "untrusted":"BLOCKED",
+              "human_gate":"HUMAN_REVIEW",
+          }
+          for scenario,status in expected.items():
+              req=urllib.request.Request(
+                  base+"/api/run",
+                  data=json.dumps({"scenario":scenario}).encode(),
+                  headers={"Content-Type":"application/json"},
+                  method="POST",
+              )
+              with urllib.request.urlopen(req, timeout=60) as r:
+                  data=json.loads(r.read().decode())
+                  assert data["status"]==status,(scenario,data)
+                  assert data["evidence"]["model_authorized_external_action"] is False
+          print("PUBLIC_DEMO_SMOKE=PASS")
+          PY
