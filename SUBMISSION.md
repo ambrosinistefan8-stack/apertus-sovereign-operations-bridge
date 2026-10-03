@@ -1,4 +1,4 @@
-# Technical report — pre-live submission state
+# Technical report — live verified submission state
 
 Project: **Apertus Sovereign Operations Bridge**  
 Hackathon track: **Apertus Adoption — Own Project (2B)**  
@@ -43,9 +43,9 @@ Apertus provides an open Swiss model foundation and supports a path toward sover
 - OpenAI-compatible Apertus client: IMPLEMENTED;
 - deterministic control tests: **5/5 PASS**;
 - public secret boundary: no credentials committed;
-- live Apertus request/readback: **PENDING AUTHORIZED HOSTED ACCESS**.
+- live Apertus request/readback: **VERIFIED** with authorized CSCS hosted inference using `swiss-ai/Apertus-v1.5-70B`.
 
-The hosted demo remains in mock mode until a real authorized Apertus request has passed. This limitation is intentionally visible.
+The hosted demo is now bound to authorized CSCS inference in live mode. Public evidence is stored in `evidence/live-cscs-20261003.json`; no credential value is recorded.
 
 ## Evaluation scenarios
 
@@ -55,7 +55,7 @@ The hosted demo remains in mock mode until a real authorized Apertus request has
 4. Embedded untrusted instruction -> BLOCKED
 5. Protected external action -> HUMAN_REVIEW
 
-These five tests validate the deterministic control layer. They are not presented as live-model evidence.
+The same five control outcomes were also exercised through the live HP → public demo → CSCS → control-readback path on 3 October 2026, with HTTP 200 responses and the expected VERIFIED / HUMAN_REVIEW / BLOCKED states.
 
 ## Track 2B criteria mapping
 
@@ -74,11 +74,11 @@ Open-source application code, open model path, synthetic test data and no depend
 ### Implementation feasibility
 Standalone Python service, browser UI, CLI, Dockerfile, public hosted demo and a prepared live client.
 
-## Live Apertus completion gate
+## Live Apertus completion evidence
 
-The final technical step is:
+The live gate is complete:
 
-`authorized endpoint/key -> real Apertus request -> structured parse -> deterministic control readback -> evidence -> hosted demo/Devpost update`
+`authorized CSCS endpoint -> real Apertus request -> structured parse -> deterministic control readback -> evidence -> hosted live demo`
 
 The repository contains:
 
@@ -86,11 +86,11 @@ The repository contains:
 - `scripts/live_probe.py` — sanitized real-request evidence runner;
 - `LIVE_EVIDENCE_TEMPLATE.md` — promotion checklist.
 
-The project must not claim `LIVE_APERTUS_VERIFIED` until the real hosted request and independent readback have passed.
+`LIVE_APERTUS_VERIFIED` is now supported by the published live evidence and independent HP-side readback. The claim is limited to this synthetic hackathon workflow and does not imply unrestricted production autonomy.
 
 ## Limitations
 
-- Current public demo uses mock model output.
-- Live hosted inference access is not yet verified for this participant.
+- The public demo uses authorized hosted Apertus inference; model outputs remain non-deterministic.
+- The live verification covers the defined synthetic hackathon scenarios, not arbitrary real customer workloads.
 - Real LLM outputs are non-deterministic; the deterministic control layer is designed to detect unsafe/ambiguous outcomes rather than force a desired model result.
 - This prototype prepares controlled work; it does not autonomously send email, make payments, sign contracts, change permissions or perform destructive actions.
