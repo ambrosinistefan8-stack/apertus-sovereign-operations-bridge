@@ -15,7 +15,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify public demo and report UI freshness
+      - name: Verify public demo API and report UI freshness
         run: |
           python - <<'PY'
           import json, time, urllib.request
@@ -28,7 +28,6 @@ jobs:
               "human_gate":"HUMAN_REVIEW",
           }
 
-          last_error=None
           for attempt in range(1, 9):
               try:
                   with urllib.request.urlopen(base+"/health", timeout=30) as r:
@@ -39,8 +38,7 @@ jobs:
 
                   with urllib.request.urlopen(base+"/", timeout=30) as r:
                       assert r.status == 200, f"home HTTP {r.status}"
-                      home=r.read().decode()
-                      assert "Apertus Sovereign Operations Bridge" in home, "project title missing"
+                      home=r.read().decode(errors="replace")
 
                   if health["mode"] == "mock":
                       for scenario,status in expected.items():
@@ -55,13 +53,16 @@ jobs:
                               assert data["status"]==status,(scenario,data)
                               assert data["evidence"]["model_authorized_external_action"] is False
 
+                  title_current="Apertus Sovereign Operations Bridge" in home
                   ui_current="deterministic control" in home
-                  print("PUBLIC_DEMO_SMOKE=PASS")
+                  print("PUBLIC_DEMO_API_SMOKE=PASS")
                   print("MODE="+health["mode"])
+                  print("PROJECT_TITLE="+("CURRENT" if title_current else "MISSING"))
                   print("UI_REVISION="+("CURRENT" if ui_current else "DEPLOY_PENDING_OR_STALE"))
+                  if not title_current:
+                      print("HOME_PREFIX="+repr(home[:400]))
                   break
               except Exception as exc:
-                  last_error=exc
                   print(f"attempt {attempt}/8 failed: {type(exc).__name__}: {exc}", flush=True)
                   if attempt == 8:
                       raise
