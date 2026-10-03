@@ -77,13 +77,24 @@ Demo: https://apertus-sovereign-operations-bridge.onrender.com
 
 Control tests: PASS
 
-Live Apertus status: **PENDING AUTHORIZED HOSTED ACCESS**
+Live Apertus status: **VERIFIED**
 
-The hosted demo intentionally remains in mock mode until an authorized real Apertus request/readback has been completed. We do not label mock output as live model evidence.
+Authorized hosted inference is live against the CSCS OpenAI-compatible endpoint with `swiss-ai/Apertus-v1.5-70B`. On 3 October 2026, the project completed the full HP → public demo → CSCS → deterministic control readback path. Five out of five expected control outcomes passed with HTTP 200 responses:
 
-## Final live-evidence paragraph — replace after verified run
+1. complete sources → VERIFIED
+2. missing fact → HUMAN_REVIEW
+3. conflicting sources → HUMAN_REVIEW
+4. embedded untrusted instruction → BLOCKED
+5. protected external action → HUMAN_REVIEW
 
-> LIVE APERTUS VERIFIED: On [UTC timestamp], the project completed a real request against the authorized [endpoint/provider] using [model]. The response parsed into the structured schema, passed through the independent control layer, and was read back with evidence hash [SHA-256/reference]. No credential or private data was stored in the public repository.
+No protected external action was executed. The model proposes; the control layer decides whether the result may proceed, requires human review, or must be blocked.
+
+Public live evidence:
+https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/blob/587522e1da34e5de17d40cde80dcb30cdf4ec72e/evidence/live-cscs-20261003.json
+
+## Final live-evidence paragraph
+
+> LIVE APERTUS VERIFIED: On 3 October 2026, the project completed real hosted inference through the authorized CSCS endpoint using `swiss-ai/Apertus-v1.5-70B`. The response was parsed into the structured schema, passed through the independent deterministic control layer, and was verified across five control scenarios. The live evidence is published in the repository without storing credentials or private data.
 
 ## What we learned
 
@@ -91,7 +102,7 @@ The hardest problem is not getting an LLM to write a plausible answer. The harde
 
 ## What's next
 
-1. bind the official Hack Apertus hosted inference access;
-2. capture real Apertus request/readback evidence;
-3. switch the public demo from mock to verified live mode;
-4. add the live evidence to this submission before the final deadline.
+1. update the existing editable Devpost submission with the verified live evidence;
+2. confirm repository, public demo and evidence links in the submission;
+3. add or refresh project media if required by the current submission form;
+4. perform the final jury-facing review before the 16 October 2026, 12:00 CEST deadline.
