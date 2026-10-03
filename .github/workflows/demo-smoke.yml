@@ -53,6 +53,21 @@ jobs:
                               assert data["status"]==status,(scenario,data)
                               assert data["evidence"]["model_authorized_external_action"] is False
 
+                  if health["mode"] == "live":
+                      req=urllib.request.Request(
+                          base+"/api/run",
+                          data=json.dumps({"scenario":"normal","task":"Prepare the correct customer response."}).encode(),
+                          headers={"Content-Type":"application/json"},
+                          method="POST",
+                      )
+                      with urllib.request.urlopen(req, timeout=120) as r:
+                          assert r.status == 200, f"live run HTTP {r.status}"
+                          live=json.loads(r.read().decode())
+                          assert live.get("status") in {"VERIFIED","HUMAN_REVIEW","BLOCKED"}, live
+                          assert live.get("model_output") is not None, live
+                      print("LIVE_APERTUS_HTTP=PASS")
+                      print("LIVE_CONTROL_STATUS="+live["status"])
+
                   title_current="Apertus Sovereign Operations Bridge" in home
                   ui_current="deterministic control" in home
                   print("PUBLIC_DEMO_API_SMOKE=PASS")
