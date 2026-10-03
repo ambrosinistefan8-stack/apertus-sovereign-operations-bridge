@@ -53,7 +53,7 @@ class OpenAICompatibleApertusClient(ApertusClient):
             lines=content.splitlines()[1:]
             if lines and lines[-1].strip().startswith("\x60\x60\x60"):
                 lines=lines[:-1]
-            content="\\n".join(lines).strip()
+            content="\n".join(lines).strip()
             if content.lower().startswith("json"):
                 content=content[4:].lstrip()
 
