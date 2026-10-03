@@ -15,7 +15,7 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify public demo after deploy propagation
+      - name: Verify public demo and report UI freshness
         run: |
           python - <<'PY'
           import json, time, urllib.request
@@ -29,19 +29,18 @@ jobs:
           }
 
           last_error=None
-          for attempt in range(1, 21):
+          for attempt in range(1, 9):
               try:
-                  with urllib.request.urlopen(base+"/health", timeout=60) as r:
-                      assert r.status == 200
+                  with urllib.request.urlopen(base+"/health", timeout=30) as r:
+                      assert r.status == 200, f"health HTTP {r.status}"
                       health=json.loads(r.read().decode())
-                      assert health["status"]=="ok"
-                      assert health["mode"] in {"mock","live"}
+                      assert health["status"]=="ok", health
+                      assert health["mode"] in {"mock","live"}, health
 
-                  with urllib.request.urlopen(base+"/", timeout=60) as r:
-                      assert r.status == 200
+                  with urllib.request.urlopen(base+"/", timeout=30) as r:
+                      assert r.status == 200, f"home HTTP {r.status}"
                       home=r.read().decode()
-                      assert "Apertus Sovereign Operations Bridge" in home
-                      assert "deterministic control" in home
+                      assert "Apertus Sovereign Operations Bridge" in home, "project title missing"
 
                   if health["mode"] == "mock":
                       for scenario,status in expected.items():
@@ -51,18 +50,20 @@ jobs:
                               headers={"Content-Type":"application/json"},
                               method="POST",
                           )
-                          with urllib.request.urlopen(req, timeout=60) as r:
+                          with urllib.request.urlopen(req, timeout=30) as r:
                               data=json.loads(r.read().decode())
                               assert data["status"]==status,(scenario,data)
                               assert data["evidence"]["model_authorized_external_action"] is False
 
+                  ui_current="deterministic control" in home
                   print("PUBLIC_DEMO_SMOKE=PASS")
                   print("MODE="+health["mode"])
+                  print("UI_REVISION="+("CURRENT" if ui_current else "DEPLOY_PENDING_OR_STALE"))
                   break
               except Exception as exc:
                   last_error=exc
-                  print(f"attempt {attempt}/20 not ready: {exc}")
-                  if attempt == 20:
+                  print(f"attempt {attempt}/8 failed: {type(exc).__name__}: {exc}", flush=True)
+                  if attempt == 8:
                       raise
-                  time.sleep(15)
+                  time.sleep(10)
           PY
