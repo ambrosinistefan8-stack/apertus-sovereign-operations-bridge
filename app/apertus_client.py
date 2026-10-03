@@ -40,14 +40,40 @@ class OpenAICompatibleApertusClient(ApertusClient):
 
     @staticmethod
     def _extract_json(content):
+        """Extract the first complete JSON object from a model reply.
+
+        The prompt requests JSON-only output, but real models may wrap the
+        object in Markdown fences or brief prose. Only a syntactically complete
+        JSON object is accepted; surrounding text is never executed.
+        """
         content=content.strip()
-        if content.startswith("~~~"): content=content.strip("~")
-        if content.startswith("```"):
+        if content.startswith("~~~"):
+            content=content.strip("~").strip()
+        if content.startswith("\x60\x60\x60"):
             lines=content.splitlines()[1:]
-            if lines and lines[-1].strip().startswith("```"): lines=lines[:-1]
-            content="\n".join(lines)
-            if content.lstrip().startswith("json"): content=content.lstrip()[4:].lstrip()
-        return json.loads(content)
+            if lines and lines[-1].strip().startswith("\x60\x60\x60"):
+                lines=lines[:-1]
+            content="\\n".join(lines).strip()
+            if content.lower().startswith("json"):
+                content=content[4:].lstrip()
+
+        try:
+            parsed=json.loads(content)
+            if isinstance(parsed,dict):
+                return parsed
+        except json.JSONDecodeError as first_error:
+            decoder=json.JSONDecoder()
+            for pos,char in enumerate(content):
+                if char!="{":
+                    continue
+                try:
+                    parsed,end=decoder.raw_decode(content[pos:])
+                except json.JSONDecodeError:
+                    continue
+                if isinstance(parsed,dict):
+                    return parsed
+            raise first_error
+        raise ValueError("Apertus response must contain a JSON object.")
 
 class MockApertusClient(ApertusClient):
     def analyze(self,system_prompt,user_prompt):
