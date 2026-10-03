@@ -34,7 +34,11 @@ class Handler(BaseHTTPRequestHandler):
             result=run_workflow(_client(),payload.get("task","Prepare the correct customer response."),scenario_documents(payload.get("scenario","normal")),["product","price_chf","delivery_days"])
             self._json(200,result)
         except Exception as exc:
-            self._json(500,{"error":type(exc).__name__,"message":str(exc)})
+            # Deliberately log only exception class and an upstream HTTP status when
+            # available. Never log provider response bodies, request headers or secrets.
+            upstream_status=getattr(exc,"code",None)
+            print(f"API_RUN_ERROR type={type(exc).__name__} upstream_status={upstream_status}",flush=True)
+            self._json(500,{"error":type(exc).__name__,"message":"Live inference failed."})
 
 def main():
     host=os.environ.get("HOST","127.0.0.1"); port=int(os.environ.get("PORT","8080"))
