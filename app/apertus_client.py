@@ -1,5 +1,5 @@
 from __future__ import annotations
-import json, os, urllib.request
+import json, os, time, urllib.request
 from abc import ABC, abstractmethod
 from .schema import ModelOutput, Fact
 
@@ -8,20 +8,35 @@ class ApertusClient(ABC):
     def analyze(self, system_prompt:str, user_prompt:str)->ModelOutput: ...
 
 class OpenAICompatibleApertusClient(ApertusClient):
-    def __init__(self,base_url=None,api_key=None,model=None):
+    def __init__(self,base_url=None,api_key=None,model=None,timeout=90,user_agent=None):
         self.base_url=(base_url or os.environ.get("APERTUS_BASE_URL","")).rstrip("/")
         self.api_key=api_key or os.environ.get("APERTUS_API_KEY","")
         self.model=model or os.environ.get("APERTUS_MODEL","swiss-ai/Apertus-v1.5-8B")
+        self.timeout=timeout
+        self.user_agent=user_agent or os.environ.get("APERTUS_USER_AGENT","SPINNENNETZ-DNA/1.0")
+        self.last_metadata={}
         if not self.base_url: raise ValueError("APERTUS_BASE_URL is required in live mode.")
 
     def analyze(self,system_prompt,user_prompt):
+        return ModelOutput.from_dict(self._extract_json(self.complete(system_prompt,user_prompt)))
+
+    def complete(self,system_prompt,user_prompt):
+        """One shared HTTP path for connectivity and structured workflow requests."""
+        self.last_metadata={}
+        started=time.monotonic()
         body={"model":self.model,"temperature":0,"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_prompt}]}
-        headers={"Content-Type":"application/json"}
+        headers={"Content-Type":"application/json","User-Agent":self.user_agent}
         if self.api_key: headers["Authorization"]=f"Bearer {self.api_key}"
         req=urllib.request.Request(f"{self.base_url}/chat/completions",data=json.dumps(body).encode(),headers=headers,method="POST")
-        with urllib.request.urlopen(req,timeout=90) as response:
+        with urllib.request.urlopen(req,timeout=self.timeout) as response:
             payload=json.loads(response.read().decode())
-        return ModelOutput.from_dict(self._extract_json(payload["choices"][0]["message"]["content"]))
+            status=getattr(response,"status",None)
+        content=payload["choices"][0]["message"]["content"]
+        self.last_metadata={"http_status":status,"model_used":payload.get("model"),
+            "latency_ms":round((time.monotonic()-started)*1000,2),
+            "response_present":isinstance(content,str) and bool(content.strip()),
+            **{k:payload.get("usage",{}).get(k) for k in ("prompt_tokens","completion_tokens","total_tokens")}}
+        return content
 
     @staticmethod
     def _extract_json(content):

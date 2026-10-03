@@ -86,6 +86,22 @@ python -m scripts.live_probe --scenario normal
 
 For the exact final sequence and evidence requirements, see [LIVE_RUNBOOK.md](LIVE_RUNBOOK.md) and [LIVE_EVIDENCE_TEMPLATE.md](LIVE_EVIDENCE_TEMPLATE.md).
 
+### PowerShell (5.1 or 7)
+
+After installing Python 3.11+, set `APERTUS_API_KEY` in an authorized environment
+or secret store, then run:
+
+```powershell
+powershell.exe -NoProfile -File .\scripts\ApertusAdapter.ps1 -Scenario normal -PythonExecutable python -TimeoutSeconds 120
+```
+
+The adapter defaults to `https://api.publicai.co/v1`, discovers `/models`, validates
+`APERTUS_MODEL` exactly (or selects an offered Apertus 1.5 model, preferring 8B),
+and calls the existing Python live probe. It returns a JSON status and a local
+`evidence/runtime-<UTC_TIMESTAMP>.json` receipt. Codex is not a runtime dependency.
+No live provider verification is claimed without authorized inference access.
+See the runbook for configuration, exit codes and bridge invocation.
+
 ## Security
 
 - Never commit API keys or tokens.
