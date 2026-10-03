@@ -24,7 +24,7 @@ class OpenAICompatibleApertusClient(ApertusClient):
         """One shared HTTP path for connectivity and structured workflow requests."""
         self.last_metadata={}
         started=time.monotonic()
-        body={"model":self.model,"temperature":0,"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_prompt}]}
+        body={"model":self.model,"temperature":0,"max_tokens":1200,"response_format":{"type":"json_object"},"messages":[{"role":"system","content":system_prompt},{"role":"user","content":user_prompt}]}
         headers={"Content-Type":"application/json","User-Agent":self.user_agent}
         if self.api_key: headers["Authorization"]=f"Bearer {self.api_key}"
         req=urllib.request.Request(f"{self.base_url}/chat/completions",data=json.dumps(body).encode(),headers=headers,method="POST")
