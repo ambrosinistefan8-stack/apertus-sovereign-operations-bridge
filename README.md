@@ -1,22 +1,49 @@
-﻿# Apertus Sovereign Operations Bridge
+# Apertus Sovereign Operations Bridge
 
-Open-source clean-room Hack Apertus prototype for source-aware, human-controlled AI workflows.
+Open-source clean-room Hack Apertus Track 2B prototype for source-aware, human-controlled AI workflows.
 
-Flow:
+**Public demo:** https://apertus-sovereign-operations-bridge.onrender.com
+
+The project demonstrates a simple but important boundary:
+
+> AI may propose work. Deterministic controls decide whether that work is safe to continue, requires human review, or must be blocked.
+
+## Flow
 
 `Request -> Apertus -> structured facts -> control checks -> human gate -> readback -> VERIFIED / HUMAN_REVIEW / BLOCKED`
 
-This folder is standalone and must not import private SPINNENNETZ-DNA code, documents, APIs, prompts, credentials, or customer data.
+This repository is standalone. It does not import private SPINNENNETZ-DNA code, documents, APIs, prompts, credentials, customer data, legal records, family data or private email.
 
-## Status
-- Clean-room code: implemented
-- Five control scenarios: implemented/tested
-- Browser demo: implemented
-- OpenAI-compatible Apertus client: implemented
-- Live Apertus inference: pending official hackathon/model access
-- Paid compute: not enabled
+## Current status
 
-## Run
+| Capability | Status |
+| --- | --- |
+| Clean-room implementation | READY |
+| Five deterministic control scenarios | 5/5 PASS |
+| Browser demo | LIVE |
+| Public repository | LIVE |
+| OpenAI-compatible Apertus client | READY |
+| Live Apertus request/readback | PENDING AUTHORIZED HOSTED ACCESS |
+| Paid compute | NOT ENABLED |
+
+The hosted demo currently remains in **mock mode** until authorized Hack Apertus inference access is bound. This is deliberate: the project does not claim live Apertus evidence before a real request/readback has passed.
+
+## What the control layer checks
+
+- conflicting facts across sources;
+- missing required information;
+- embedded untrusted instructions;
+- protected external actions that require human approval;
+- separation between model proposal and authorization.
+
+Final states:
+
+- **VERIFIED** — no deterministic blocker detected;
+- **HUMAN_REVIEW** — missing/conflicting information or protected action;
+- **BLOCKED** — untrusted embedded instruction detected.
+
+## Run locally
+
 ```bash
 python -m unittest discover -s tests -v
 python -m app.server
@@ -24,7 +51,8 @@ python -m app.server
 
 Open http://127.0.0.1:8080
 
-CLI:
+CLI scenarios:
+
 ```bash
 python -m scripts.run_demo normal
 python -m scripts.run_demo conflict
@@ -33,21 +61,43 @@ python -m scripts.run_demo untrusted
 python -m scripts.run_demo human_gate
 ```
 
-Live endpoint:
-```bash
-export APERTUS_MODE=live
-export APERTUS_BASE_URL="https://YOUR-ENDPOINT/v1"
-export APERTUS_API_KEY="..."
-export APERTUS_MODEL="swiss-ai/Apertus-v1.5-8B"
-python -m app.server
-```
+Expected mock/control statuses:
 
-Expected statuses:
 - normal -> VERIFIED
 - missing -> HUMAN_REVIEW
 - conflict -> HUMAN_REVIEW
 - untrusted -> BLOCKED
 - human_gate -> HUMAN_REVIEW
 
-See CLEANROOM.md and SUBMISSION.md.
+## Live Apertus binding
 
+The live client uses an OpenAI-compatible `/chat/completions` interface.
+
+Public Swiss AI repositories document a CSCS OpenAI-compatible base URL at `https://api.swissai.svc.cscs.ch/v1`. Hackathon access/credentials must still be explicitly authorized before use.
+
+```bash
+export APERTUS_MODE=live
+export APERTUS_BASE_URL="https://api.swissai.svc.cscs.ch/v1"
+export APERTUS_API_KEY="<AUTHORIZED_SECRET>"
+export APERTUS_MODEL="swiss-ai/Apertus-v1.5-8B"
+
+python -m scripts.live_probe --scenario normal
+```
+
+For the exact final sequence and evidence requirements, see [LIVE_RUNBOOK.md](LIVE_RUNBOOK.md) and [LIVE_EVIDENCE_TEMPLATE.md](LIVE_EVIDENCE_TEMPLATE.md).
+
+## Security
+
+- Never commit API keys or tokens.
+- `.env` is ignored.
+- Runtime evidence files are ignored until manually reviewed.
+- Live evidence records that authentication exists, never the credential value.
+- Demo fixtures contain synthetic data only.
+
+## Hack Apertus
+
+Track: **Apertus Adoption — Own Project (2B)**
+
+The project is designed around the Track 2B criteria: purposeful AI use, technical rigour, value/cost/scalability, sovereign deployability and implementation feasibility.
+
+See [SUBMISSION.md](SUBMISSION.md), [CLEANROOM.md](CLEANROOM.md) and [SECURITY.md](SECURITY.md).
