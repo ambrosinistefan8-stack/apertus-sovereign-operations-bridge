@@ -72,5 +72,11 @@ class ApertusClientTests(unittest.TestCase):
         self.assertEqual(parsed["proposed_response"], "ok")
 
 
+    def test_json_wrapped_in_brief_prose_is_parsed(self):
+        content = 'Result follows: {"facts":[],"missing_required":[],"untrusted_instructions":[],"proposed_response":"ok","requested_actions":[]} End.'
+        parsed = OpenAICompatibleApertusClient._extract_json(content)
+        self.assertEqual(parsed["proposed_response"], "ok")
+
+
 if __name__ == "__main__":
     unittest.main()
