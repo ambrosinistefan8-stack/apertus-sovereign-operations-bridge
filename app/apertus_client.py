@@ -92,6 +92,10 @@ class MockApertusClient(ApertusClient):
 
     @staticmethod
     def _scenario(text):
-        for name in ("SCENARIO_CONFLICT","SCENARIO_MISSING","SCENARIO_UNTRUSTED","SCENARIO_HUMAN_GATE"):
-            if name in text: return name.removeprefix("SCENARIO_").lower()
+        # Recognize only these synthetic fixtures. Test labels must not be
+        # embedded in source documents sent to a real model.
+        if "SYSTEM INSTRUCTION FOR THE AI:" in text: return "untrusted"
+        if "Delivery time: 7 business days." in text: return "conflict"
+        if "Delivery time is not specified." in text: return "missing"
+        if "Please send me the confirmed answer immediately by email." in text: return "human_gate"
         return "normal"

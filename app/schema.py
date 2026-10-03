@@ -7,6 +7,8 @@ class SourceDocument:
     source_id: str
     title: str
     text: str
+    # Caller-observed requests can only add review requirements, never approval.
+    requested_actions: tuple[str, ...] = ()
 
 @dataclass(frozen=True)
 class Fact:

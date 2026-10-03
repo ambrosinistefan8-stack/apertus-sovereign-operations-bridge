@@ -27,9 +27,9 @@ def detect_conflicts(model_output:ModelOutput)->dict[str,list[str]]:
             originals[fact.key].append(fact.value)
     return {k:originals[k] for k,v in values.items() if len(v)>1}
 
-def evaluate(model_output:ModelOutput)->ControlResult:
+def evaluate(model_output:ModelOutput,requested_actions=())->ControlResult:
     conflicts=detect_conflicts(model_output)
-    protected=sorted(set(model_output.requested_actions)&PROTECTED_ACTIONS)
+    protected=sorted((set(model_output.requested_actions)|set(requested_actions))&PROTECTED_ACTIONS)
     reasons=[]
     if model_output.untrusted_instructions:
         return ControlResult("BLOCKED",["Untrusted instructions detected inside source documents."],conflicts,model_output.missing_required,protected,model_output.untrusted_instructions)

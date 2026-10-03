@@ -23,17 +23,17 @@ This repository is standalone. It does not import private SPINNENNETZ-DNA code, 
 | Browser demo | LIVE |
 | Public repository | LIVE |
 | OpenAI-compatible Apertus client | READY |
-| Live Apertus request/readback | PENDING AUTHORIZED HOSTED ACCESS |
+| Live Apertus request/readback | VERIFIED with CSCS Apertus v1.5 70B (2026-10-03) |
 | Paid compute | NOT ENABLED |
 
-The hosted demo currently remains in **mock mode** until authorized Hack Apertus inference access is bound. This is deliberate: the project does not claim live Apertus evidence before a real request/readback has passed.
+Authorized CSCS inference is configured for the hosted demo in **live mode**. The dated synthetic request/response evidence is in `evidence/live-cscs-20261003.json`. This is a prototype demonstration, not a guarantee of model accuracy or permission to execute external actions.
 
 ## What the control layer checks
 
 - conflicting facts across sources;
 - missing required information;
 - embedded untrusted instructions;
-- protected external actions that require human approval;
+- protected external actions that require human approval (including caller-observed requests that the model omits);
 - separation between model proposal and authorization.
 
 Final states:
@@ -73,11 +73,11 @@ Expected mock/control statuses:
 
 The live client uses an OpenAI-compatible `/chat/completions` interface.
 
-Public Swiss AI repositories document a CSCS OpenAI-compatible base URL at `https://api.swissai.svc.cscs.ch/v1`. Hackathon access/credentials must still be explicitly authorized before use.
+The organizer-confirmed CSCS base URL is `https://api.inference.cscs.ch/v1`. Credentials stay in the runtime secret store; they are never included in source or evidence.
 
 ```bash
 export APERTUS_MODE=live
-export APERTUS_BASE_URL="https://api.swissai.svc.cscs.ch/v1"
+export APERTUS_BASE_URL="https://api.inference.cscs.ch/v1"
 export APERTUS_API_KEY="<AUTHORIZED_SECRET>"
 export APERTUS_MODEL="swiss-ai/Apertus-v1.5-8B"
 

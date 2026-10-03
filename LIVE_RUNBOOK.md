@@ -4,11 +4,11 @@ This runbook is the final technical handoff from the verified mock/control proto
 
 ## Current gate
 
-The application, deterministic control layer, browser demo and five local control scenarios are implemented. A real Apertus run remains blocked only by authorized hosted inference access.
+The application, deterministic control layer, browser demo and five local control scenarios are implemented. Authorized CSCS access has been received and real Apertus requests have passed. See the dated evidence in evidence/live-cscs-20261003.json; repeat the checks below when changing configuration.
 
 Public Swiss AI repositories document an OpenAI-compatible CSCS endpoint at:
 
-`https://api.swissai.svc.cscs.ch/v1`
+`https://api.inference.cscs.ch/v1`
 
 Use that endpoint only when the Hack Apertus organizers or the authorized access instructions confirm that the provided credential is valid for it. Do not guess, scrape or bypass access controls.
 
@@ -32,7 +32,7 @@ Expected: all deterministic tests pass.
 
 ```bash
 export APERTUS_MODE=live
-export APERTUS_BASE_URL="https://api.swissai.svc.cscs.ch/v1"
+export APERTUS_BASE_URL="https://api.inference.cscs.ch/v1"
 export APERTUS_API_KEY="<SET_IN_SECRET_STORE_OR_SHELL>"
 export APERTUS_MODEL="swiss-ai/Apertus-v1.5-8B"
 ```
