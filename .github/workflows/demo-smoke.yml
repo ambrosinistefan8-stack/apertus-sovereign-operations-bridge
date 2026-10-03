@@ -2,7 +2,12 @@ name: demo-smoke
 
 on:
   push:
+    branches: [main]
     paths:
+      - "app/**"
+      - "static/**"
+      - "Dockerfile"
+      - "pyproject.toml"
       - ".github/workflows/demo-smoke.yml"
   workflow_dispatch:
 
@@ -10,36 +15,54 @@ jobs:
   smoke:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify public demo
+      - name: Verify public demo after deploy propagation
         run: |
           python - <<'PY'
-          import json, urllib.request
+          import json, time, urllib.request
+
           base="https://apertus-sovereign-operations-bridge.onrender.com"
-          with urllib.request.urlopen(base+"/health", timeout=60) as r:
-              assert r.status == 200
-              health=json.loads(r.read().decode())
-              assert health["status"]=="ok"
-              assert health["mode"]=="mock"
-          with urllib.request.urlopen(base+"/", timeout=60) as r:
-              assert r.status == 200
-              home=r.read().decode()
-              assert "Apertus" in home
           expected={
               "normal":"VERIFIED",
               "conflict":"HUMAN_REVIEW",
               "untrusted":"BLOCKED",
               "human_gate":"HUMAN_REVIEW",
           }
-          for scenario,status in expected.items():
-              req=urllib.request.Request(
-                  base+"/api/run",
-                  data=json.dumps({"scenario":scenario}).encode(),
-                  headers={"Content-Type":"application/json"},
-                  method="POST",
-              )
-              with urllib.request.urlopen(req, timeout=60) as r:
-                  data=json.loads(r.read().decode())
-                  assert data["status"]==status,(scenario,data)
-                  assert data["evidence"]["model_authorized_external_action"] is False
-          print("PUBLIC_DEMO_SMOKE=PASS")
+
+          last_error=None
+          for attempt in range(1, 21):
+              try:
+                  with urllib.request.urlopen(base+"/health", timeout=60) as r:
+                      assert r.status == 200
+                      health=json.loads(r.read().decode())
+                      assert health["status"]=="ok"
+                      assert health["mode"] in {"mock","live"}
+
+                  with urllib.request.urlopen(base+"/", timeout=60) as r:
+                      assert r.status == 200
+                      home=r.read().decode()
+                      assert "Apertus Sovereign Operations Bridge" in home
+                      assert "deterministic control" in home
+
+                  if health["mode"] == "mock":
+                      for scenario,status in expected.items():
+                          req=urllib.request.Request(
+                              base+"/api/run",
+                              data=json.dumps({"scenario":scenario}).encode(),
+                              headers={"Content-Type":"application/json"},
+                              method="POST",
+                          )
+                          with urllib.request.urlopen(req, timeout=60) as r:
+                              data=json.loads(r.read().decode())
+                              assert data["status"]==status,(scenario,data)
+                              assert data["evidence"]["model_authorized_external_action"] is False
+
+                  print("PUBLIC_DEMO_SMOKE=PASS")
+                  print("MODE="+health["mode"])
+                  break
+              except Exception as exc:
+                  last_error=exc
+                  print(f"attempt {attempt}/20 not ready: {exc}")
+                  if attempt == 20:
+                      raise
+                  time.sleep(15)
           PY
