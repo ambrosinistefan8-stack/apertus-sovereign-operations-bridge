@@ -1,1 +1,102 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Apertus Sovereign Operations Bridge</title><style>body{font-family:system-ui,sans-serif;max-width:980px;margin:40px auto;padding:0 18px;background:#fafafa;color:#161616}.card{background:white;border:1px solid #ddd;border-radius:14px;padding:22px;margin:16px 0}.row{display:flex;gap:10px;flex-wrap:wrap}button{padding:10px 14px;border:1px solid #bbb;border-radius:9px;background:#fff;cursor:pointer}pre{white-space:pre-wrap;background:#111;color:#eee;padding:18px;border-radius:10px}.status{font-size:28px;font-weight:700}</style></head><body><h1>Apertus Sovereign Operations Bridge</h1><p>From AI answer to controlled, verified work.</p><div class="card"><div class="row"><button onclick="run('normal')">Normal</button><button onclick="run('missing')">Missing fact</button><button onclick="run('conflict')">Source conflict</button><button onclick="run('untrusted')">Untrusted instruction</button><button onclick="run('human_gate')">Human gate</button></div><div id="status" class="status">Ready</div><p id="reason">Choose a scenario.</p></div><div class="card"><pre id="output">{}</pre></div><script>async function run(s){document.getElementById('status').textContent='Running...';const r=await fetch('/api/run',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({scenario:s})});const d=await r.json();document.getElementById('status').textContent=d.status||'ERROR';document.getElementById('reason').textContent=((d.control&&d.control.reasons)||[]).join(' ');document.getElementById('output').textContent=JSON.stringify(d,null,2)}</script></body></html>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Apertus Sovereign Operations Bridge</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#171717;background:#f5f5f2}
+body{max-width:1060px;margin:0 auto;padding:36px 18px 56px}
+h1{font-size:clamp(34px,6vw,62px);line-height:1.02;margin:8px 0 14px}
+h2{margin-top:0}
+.lead{font-size:20px;max-width:780px;line-height:1.5;color:#454545}
+.kicker{font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin:24px 0}
+.card{background:#fff;border:1px solid #deded8;border-radius:16px;padding:22px}
+.flow{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;overflow:auto;white-space:nowrap;padding:16px;background:#171717;color:#f5f5f2;border-radius:12px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+button{padding:11px 14px;border:1px solid #aaa;border-radius:10px;background:#fff;cursor:pointer;font-weight:650}
+button:hover{background:#f0f0ec}
+.status{font-size:30px;font-weight:800;margin-top:18px}
+.mode{display:inline-block;padding:6px 9px;border-radius:999px;border:1px solid #bbb;background:#fff;font-size:13px;font-weight:700}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#111;color:#eee;padding:18px;border-radius:12px;max-height:560px;overflow:auto}
+small,.muted{color:#666;line-height:1.5}
+a{color:inherit}
+</style>
+</head>
+<body>
+<div class="kicker">Hack Apertus · Track 2B · Own Project</div>
+<h1>Apertus Sovereign Operations Bridge</h1>
+<p class="lead">A clean-room prototype that turns model output into controlled work: sources stay traceable, conflicts and missing facts trigger review, untrusted instructions are blocked, and protected actions stop at a human gate.</p>
+
+<div class="card">
+  <div class="flow">Request → Apertus → structured facts → control checks → human gate → readback → VERIFIED / HUMAN_REVIEW / BLOCKED</div>
+</div>
+
+<div class="grid">
+  <div class="card">
+    <h2>Demo mode</h2>
+    <div id="mode" class="mode">Checking…</div>
+    <p class="muted">The hosted demo remains in mock mode until authorized Hack Apertus inference access is verified. The control layer is real in both modes.</p>
+  </div>
+  <div class="card">
+    <h2>Safety boundary</h2>
+    <p>The model may propose work, but it never authorizes email sending, payments, purchases, contracts, permission changes or destructive actions.</p>
+  </div>
+  <div class="card">
+    <h2>Open source</h2>
+    <p><a href="https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge" target="_blank" rel="noreferrer">Inspect the code, tests and live-readiness runbook on GitHub.</a></p>
+  </div>
+</div>
+
+<div class="card">
+  <h2>Try the deterministic control scenarios</h2>
+  <div class="row">
+    <button onclick="run('normal')">Normal</button>
+    <button onclick="run('missing')">Missing fact</button>
+    <button onclick="run('conflict')">Source conflict</button>
+    <button onclick="run('untrusted')">Untrusted instruction</button>
+    <button onclick="run('human_gate')">Human gate</button>
+  </div>
+  <div id="status" class="status">Ready</div>
+  <p id="reason">Choose a scenario.</p>
+</div>
+
+<div class="card">
+  <h2>Evidence readback</h2>
+  <pre id="output">{}</pre>
+  <small>The input fixtures are synthetic. No private SPINNENNETZ-DNA, customer, legal, family or email data is used by this public demo.</small>
+</div>
+
+<script>
+async function readMode(){
+  try{
+    const r=await fetch('/health');
+    const d=await r.json();
+    document.getElementById('mode').textContent=(d.mode||'unknown').toUpperCase();
+  }catch(e){
+    document.getElementById('mode').textContent='UNAVAILABLE';
+  }
+}
+async function run(s){
+  document.getElementById('status').textContent='Running…';
+  document.getElementById('reason').textContent='Evaluating model output through deterministic controls.';
+  try{
+    const r=await fetch('/api/run',{
+      method:'POST',
+      headers:{'content-type':'application/json'},
+      body:JSON.stringify({scenario:s})
+    });
+    const d=await r.json();
+    document.getElementById('status').textContent=d.status||'ERROR';
+    document.getElementById('reason').textContent=((d.control&&d.control.reasons)||[d.message||'']).join(' ');
+    document.getElementById('output').textContent=JSON.stringify(d,null,2);
+  }catch(e){
+    document.getElementById('status').textContent='ERROR';
+    document.getElementById('reason').textContent=String(e);
+  }
+}
+readMode();
+</script>
+</body>
+</html>
