@@ -83,6 +83,16 @@ The hardest part is not getting an LLM to write a plausible answer. The harder e
 
 Separating semantic generation from deterministic authorization makes uncertainty, policy boundaries, and failures visible and testable.
 
+## How the architecture evolved during the hackathon
+
+Since the first submission, the engineering work has validated the same control pattern at a broader agentic-operations level:
+
+`intent → governed mission → Apertus semantic work → deterministic authorization → bounded execution → target-state readback → evidence`
+
+The hackathon repository deliberately remains a standalone clean-room implementation. It does not import private SPINNENNETZ-DNA code, data, credentials or internal APIs. The broader system work is relevant as engineering validation: authorization stays outside the model, external effects remain gated, successful writes require independent readback, evidence is attached to runs, and recovery avoids blindly replaying unknown effects.
+
+This positions Apertus Sovereign Operations Bridge as a compact open reference implementation for **sovereign controlled-agent workflows**, not merely a conversational demo.
+
 ## What's next for Apertus Sovereign Operations Bridge
 
 Next steps are to benchmark Apertus 8B and 70B for different workload/cost profiles, add more synthetic SME workflows, strengthen source-level evaluation, and test a fully self-hosted Swiss deployment path.
