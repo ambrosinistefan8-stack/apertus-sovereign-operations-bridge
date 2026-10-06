@@ -100,9 +100,39 @@ https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/bl
 
 The hardest problem is not getting an LLM to write a plausible answer. The harder problem is defining what must happen between a model answer and a real-world action. Separating semantic generation from authorization makes failures visible and testable.
 
+## Architecture evolution during the hackathon
+
+The prototype started as a controlled document-analysis bridge. During the hackathon, the underlying engineering work validated a broader operating pattern for sovereign agentic systems:
+
+`intent → governed mission → Apertus semantic work → deterministic authorization → bounded execution → target-state readback → evidence`
+
+The public repository remains intentionally clean-room and standalone. It does **not** expose or depend on private SPINNENNETZ-DNA code, documents or credentials. The wider system work was used as engineering validation for the same principles demonstrated here:
+
+- semantic intelligence and authorization are separate;
+- external effects are bounded by explicit owner/human gates;
+- writes require target-state readback rather than trusting a success message;
+- evidence is attached to runs;
+- restart/recovery paths must avoid blind replay of unknown writes;
+- provider bindings are replaceable so the sovereign model layer is not coupled to one closed platform.
+
+This makes the hackathon prototype more than a chatbot demo: it is a small, reproducible reference implementation of a **sovereign controlled-agent pattern**.
+
+## Current jury-facing state — 6 October 2026
+
+- Track 2B clean-room prototype: **LIVE**
+- Authorized Apertus v1.5 70B inference through CSCS: **VERIFIED**
+- Five live control scenarios: **5/5 expected outcomes**
+- Public repository and browser demo: **LIVE**
+- Deterministic authorization outside the model: **VERIFIED by tests**
+- Source/input evidence hashes: **IMPLEMENTED**
+- Protected external actions: **HUMAN-GATED / not autonomously executed**
+- Private production-system code/data: **NOT INCLUDED**
+- Paid compute dependency: **NOT ENABLED**
+
 ## What's next
 
-1. update the existing editable Devpost submission with the verified live evidence;
-2. confirm repository, public demo and evidence links in the submission;
-3. add or refresh project media if required by the current submission form;
-4. perform the final jury-facing review before the 16 October 2026, 12:00 CEST deadline.
+1. keep the public clean-room boundary intact while enriching the jury description with the validated agentic-operations architecture;
+2. benchmark Apertus 8B versus 70B for resource/cost trade-offs;
+3. extend source-level evaluation and synthetic SME workflows;
+4. test a fully self-hosted Swiss deployment path;
+5. perform the final jury-facing review before the 16 October 2026, 12:00 CEST deadline.
