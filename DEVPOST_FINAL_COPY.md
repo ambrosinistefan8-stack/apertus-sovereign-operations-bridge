@@ -136,3 +136,15 @@ This makes the hackathon prototype more than a chatbot demo: it is a small, repr
 3. extend source-level evaluation and synthetic SME workflows;
 4. test a fully self-hosted Swiss deployment path;
 5. perform the final jury-facing review before the 16 October 2026, 12:00 CEST deadline.
+
+
+## Pending private-system evidence before final Devpost sync
+
+The public submission must remain evidence-led. Before the final Devpost update, review the latest VERIFIED outcomes from the private engineering system and include only abstract architecture principles that are supported by real readback:
+
+- universal governed mission control across materially different mission classes;
+- direct execution paths that do not require a coding agent when existing Cloud/Connector/HP capabilities are sufficient;
+- HP availability/closed-lid behavior only if actually verified;
+- restart/resume, idempotency and no-blind-replay only to the extent demonstrated.
+
+Do not expose private SPINNENNETZ-DNA code, credentials, documents or internal infrastructure. Do not claim pending jobs as completed. The final Devpost mutation remains on HOLD until this evidence review is complete.
