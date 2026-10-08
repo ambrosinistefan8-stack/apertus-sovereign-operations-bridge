@@ -61,7 +61,7 @@ Clone the public repository [2]. Docker and Make are required for the judge pack
 
 From the repository root or track_2b/: set LLM_NAME=swiss-ai/Apertus-v1.5-70B, LLM_BASE_URL=https://api.inference.cscs.ch/v1 and the authorized LLM_API_KEY in the environment, then run make run. Open http://127.0.0.1:8080. Live mode fails when its model/endpoint configuration is missing and never silently switches to mock. An on-premise endpoint can be supplied instead. Credentials are not passed as literal command-line values.
 
-Run make demo for the explicit mock/control demonstration, or python -m unittest discover -s tests -v at the repository root for the existing tests. The judge-package workflow builds the Docker image and checks all five mock HTTP outcomes without inference secrets. Its current status is visible in repository Actions; a mock container check is not another live Apertus run.
+Run make demo for the explicit mock/control demonstration, or python -m unittest discover -s tests -v at the repository root for the existing tests. On 8 October, 30 existing tests and three package tests passed. The judge-package workflow successfully built the Docker image, started it through make run and verified all five mock HTTP outcomes [6]. It used no inference secrets; this is not another live Apertus run.
 
 The original hosted app remains at [3]. The root Makefile forwards to track_2b/. The compatibility snapshot is refreshed with scripts/sync_judge_package.py and checked by tests. The package is an adaptation of the existing public repository to the current track layout, not a new project copied from private infrastructure.
 
@@ -74,7 +74,7 @@ The organizers require the separate official submission portal [4]. A Devpost su
 
 ### Media
 
-The existing Devpost main video is https://youtu.be/Xzft-gigyIA. Its suitability as the required prototype demonstration remains subject to review. The additional narrated architecture animation [5] is 2 minutes 26 seconds and is an explainer, not a live execution recording or a substitute for the maximum two-minute demo requirement.
+The existing Devpost main video is https://youtu.be/Xzft-gigyIA. Its player shows 1 minute 8 seconds, within the length limit. Its title and available transcript describe a general SPINNENNETZ-DNA promotional film; a concrete demonstration of the Apertus prototype has not been established. That content gap remains open. The additional architecture animation [5] is 2 minutes 26 seconds and does not replace the required maximum two-minute prototype demo.
 
 ### Track 2B contribution
 
@@ -91,6 +91,8 @@ Purposeful AI use: Apertus performs language analysis, with authorization outsid
 [4] Official submission portal: https://hackapertus.ch/online-hack/submissions
 
 [5] Additional architecture explainer: https://scrimba.com/explain/guide0fr35d7gp?fullscreen=1
+
+[6] Docker/Make verification: https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/actions/runs/37840042147
 
 Requirements reviewed: https://github.com/HackApertus/project-template/tree/main/track_2b
 
