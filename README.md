@@ -16,6 +16,13 @@ This repository is standalone. It does not import private SPINNENNETZ-DNA code, 
 
 ## Current status
 
+**8 October supplement:** [scoped integration findings](SUPPLEMENT_20261008.md),
+[current Devpost text](DEVPOST_DESCRIPTION_FINAL.md), and
+[Track 2B judge package with report PDF and Docker/Make entrypoint](track_2b/README.md).
+The official portal submission receipt is a separate item from the existing
+Devpost submitted status. The private HP/Office/print integration is not included
+in the public application's capabilities.
+
 | Capability | Status |
 | --- | --- |
 | Clean-room implementation | READY |

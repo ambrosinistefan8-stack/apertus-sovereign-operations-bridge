@@ -1,0 +1,47 @@
+name: judge-package
+on:
+  push:
+    branches: [main]
+    paths: ['track_2b/**', 'app/**', 'static/**', 'tests/test_judge_package.py', '.github/workflows/judge-package.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check package sources and environment mapping
+        run: python -m unittest discover -s tests -p test_judge_package.py -v
+      - name: Build judge container
+        run: make -C track_2b build
+      - name: Run explicit offline control demonstration
+        run: |
+          make run APERTUS_MODE=mock CONTAINER=judge-package > /tmp/judge-package.log 2>&1 &
+          python - <<'PY'
+          import json, time, urllib.request
+          base = 'http://127.0.0.1:8080'
+          for attempt in range(30):
+              try:
+                  with urllib.request.urlopen(base + '/health', timeout=2) as r:
+                      assert json.load(r) == {'status': 'ok', 'mode': 'mock'}
+                  break
+              except Exception:
+                  if attempt == 29: raise
+                  time.sleep(1)
+          expected = {'normal':'VERIFIED','missing':'HUMAN_REVIEW','conflict':'HUMAN_REVIEW','untrusted':'BLOCKED','human_gate':'HUMAN_REVIEW'}
+          for scenario, status in expected.items():
+              req = urllib.request.Request(base + '/api/run', data=json.dumps({'scenario':scenario}).encode(), headers={'Content-Type':'application/json'})
+              with urllib.request.urlopen(req, timeout=5) as r:
+                  result = json.load(r)
+              assert result['status'] == status, (scenario, result)
+              assert result['evidence']['model_authorized_external_action'] is False
+              print(scenario, status)
+          print('DOCKER_CONTROL_5_OF_5_PASS; not live-model evidence')
+          PY
+      - name: Cleanup
+        if: always()
+        run: |
+          cat /tmp/judge-package.log || true
+          docker rm -f judge-package || true
