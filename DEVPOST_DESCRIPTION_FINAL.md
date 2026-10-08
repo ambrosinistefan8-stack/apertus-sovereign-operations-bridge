@@ -106,6 +106,14 @@ Next steps are to benchmark Apertus 8B and 70B for different workload/cost profi
 
 The goal is not unrestricted autonomy. The goal is a reusable pattern for **controlled autonomy with evidence and human responsibility**.
 
+## Technical report and judge package
+
+[Technical report (PDF, four pages)](https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/blob/7ae2a15f7d2aff0c9610510d9398db76785265a9/track_2b/SPINNENNETZ-DNA_Report.pdf)
+
+[Track 2B source and Docker/Make instructions](https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/tree/7ae2a15f7d2aff0c9610510d9398db76785265a9/track_2b)
+
+The judge package accepts the official LLM_NAME, LLM_BASE_URL and LLM_API_KEY settings. The Docker build, launch through make run, and five explicit mock/control HTTP scenarios passed on 8 October: [verification run](https://github.com/ambrosinistefan8-stack/apertus-sovereign-operations-bridge/actions/runs/37840042147). This packaging check is separate from the published live Apertus evidence.
+
 ## Additional explainer: SPINNENNETZ-DNA
 
 [So funktioniert SPINNENNETZ-DNA – Architektur und geprüfter Ablauf](https://scrimba.com/explain/guide0fr35d7gp?fullscreen=1)
